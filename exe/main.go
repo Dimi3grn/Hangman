@@ -1,77 +1,44 @@
 package main
 
 import (
-	"bufio"
+	hangman "Hangman" // replace with your actual module name
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"time"
 )
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	// Vérifier si un fichier est passé en argument
-	if len(os.Args) < 2 {
-		log.Fatal("Veuillez fournir un fichier en paramètre.")
-	}
+	dir := "./mots"
 
-	fileName := os.Args[1]
-	file, err := os.Open(fileName)
+	// Lire le contenu du dossier
+	entries, err := os.ReadDir(dir)
 	if err != nil {
-		log.Fatal(err)
-		fmt.Println("d")
+		fmt.Println("Erreur lors de la lecture du dossier :", err)
+		return
 	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	wordsArr := []string{}
-	for scanner.Scan() {
-		wordsArr = append(wordsArr, scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	hiddenWord := wordsArr[rand.Intn(len(wordsArr))]
-	amoutOfLetters := (len(hiddenWord) / 10) + 1
-	display := make([]rune, len(hiddenWord))
-	for i := range display {
-		display[i] = '_'
-	}
-
-	indicesChoisis := []int{}
-	for len(indicesChoisis) < amoutOfLetters {
-		ind := rand.Intn(len(hiddenWord))
-		dejaChoisi := false
-		for _, i := range indicesChoisis {
-			if i == ind {
-				dejaChoisi = true
-				break
-			}
-		}
-		if !dejaChoisi {
-			indicesChoisis = append(indicesChoisis, ind)
-			display[ind] = rune(hiddenWord[ind])
+	var files []string
+	// Parcourir les entrées
+	for _, entry := range entries {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".txt" {
+			files = append(files, entry.Name()[0:len(entry.Name())-4])
 		}
 	}
-
-	isRunning := true
-	for isRunning {
-		fmt.Println(string(display))
-		var option string
-		fmt.Println("Choisissez une lettre")
-		fmt.Scan(&option)
-		for k, _ := range hiddenWord {
-			if option == string(hiddenWord[k]) {
-				display[k] = rune(hiddenWord[k])
-			}
-			if display[k] != 95 {
-			}
-		}
-		clear()
+	// Vérifier si un fichier est passé en argument
+	fmt.Println("quel fichier??")
+	for _, k := range files {
+		fmt.Println(k)
 	}
+	var chosenFile string
+	fmt.Scan(&chosenFile)
+	fileName := ".\\mots\\" + chosenFile + ".txt"
+	wordsArr := hangman.ReadWordsFromFile(fileName)
 
-}
+	hiddenWord := hangman.SelectRandomWord(wordsArr)
+	display := hangman.InitializeDisplay(hiddenWord)
 
-func clear() {
-	fmt.Printf("\033[H\033[2J")
+	// Logic for choosing letters
+	hangman.PlayGame(hiddenWord, display)
 }
