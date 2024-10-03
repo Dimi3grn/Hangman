@@ -6,13 +6,14 @@ import (
 
 func PlayGame(hiddenWord string, display []rune) {
 	isRunning := true
-	tries := 10                    // Nombre limité d'essais
+	tries := 6                     // Nombre limité d'essais
 	attemptedLetters := []string{} // Liste des lettres déjà tentées
 	attemptedWords := []string{}
 	fmt.Println("Le mot à deviner a", len(hiddenWord), "lettres.")
 	fmt.Println("Affichage actuel :", string(display)) // Afficher l'affichage initial
 
 	for isRunning && tries > 0 {
+		printHangman(tries)
 		var option string
 		fmt.Println("Choisissez une lettre ou proposez un mot entier (tentatives restantes :", tries, ")")
 		fmt.Scan(&option)
@@ -64,6 +65,7 @@ func PlayGame(hiddenWord string, display []rune) {
 
 		// Mettre à jour l'affichage
 		if !UpdateDisplay(hiddenWord, display, option) {
+			Clear()
 			tries-- // Décrémente le nombre d'essais si la lettre n'est pas trouvée
 			fmt.Println("Mauvaise lettre !")
 		}

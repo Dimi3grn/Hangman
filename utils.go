@@ -71,3 +71,75 @@ func CheckComp(dis []rune) bool {
 	}
 	return isRunning
 }
+
+func printHangman(c int) {
+	switch c {
+	case 6:
+		fmt.Println(`
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========`)
+	case 5:
+		fmt.Println(`
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`)
+	case 4:
+		fmt.Println(`
++---+
+|   |
+O   |
+|   |
+    |
+    |
+=========`)
+
+	case 3:
+		fmt.Println(`
++---+
+|   |
+O   |
+/|  |
+    |
+    |
+=========`)
+
+	case 2:
+		fmt.Println(`
+ +---+
+ |   |
+ O   |
+/|\\ |
+     |
+     |
+=========`)
+
+	case 1:
+		fmt.Println(`
+ +---+
+ |   |
+ O   |
+/|\\ |
+/    |
+     |
+=========`)
+
+	case 0:
+		fmt.Println(`
+ +---+
+ |   |
+ O   |
+/|\\ |
+/ \\ |
+     |
+=========`)
+	}
+}
