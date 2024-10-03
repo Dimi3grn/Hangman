@@ -107,7 +107,12 @@ func InitializeDisplay(hiddenWord string) []rune {
 	amountofL := GetDisplayAmount(hiddenWord)
 	display := make([]rune, len(hiddenWord))
 	for i := range display {
-		display[i] = '_'
+		if hiddenWord[i] != ' ' {
+			display[i] = '_'
+		} else {
+			display[i] = ' '
+		}
+
 	}
 
 	indicesChoisis := []int{}
