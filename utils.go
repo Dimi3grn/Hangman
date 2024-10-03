@@ -19,13 +19,81 @@ func ReadWordsFromFile(fileName string) []string {
 
 	scanner := bufio.NewScanner(file)
 	wordsArr := []string{}
+	cpt := 0
 	for scanner.Scan() {
-		wordsArr = append(wordsArr, scanner.Text())
+		if cpt != 0 {
+			wordsArr = append(wordsArr, scanner.Text())
+		}
+		cpt += 1
+
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 	return wordsArr
+}
+
+func getDifficulty(fileName string) string {
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	scanner.Scan()
+	diff := scanner.Text()
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return diff
+}
+
+func GetFiles() {
+	rand.Seed(time.Now().UnixNano())
+	dir := "./mots"
+
+	// Lire le contenu du dossier
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		fmt.Println("Erreur lors de la lecture du dossier :", err)
+		return
+	}
+
+	var files []string
+	// Parcourir les entrées
+	for _, entry := range entries {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".txt" {
+
+			files = append(files, entry.Name()[0:len(entry.Name())-4])
+		}
+	}
+	// Vérifier si un fichier est passé en argument
+	fmt.Println("Choisissez un thème de mots parmis la lise :")
+	red := "\033[31m"
+	yellow := "\033[33m"
+	reset := "\033[0m"
+	green := "\033[32m"
+	for _, k := range files {
+		diffi := getDifficulty(".\\mots\\" + k + ".txt")
+		fmt.Print(" -")
+		switch {
+		case diffi == "hard":
+
+			fmt.Printf("%s%s%s\n", red, k, reset)
+
+		case diffi == "medium":
+			fmt.Printf("%s%s%s\n", yellow, k, reset)
+
+		case diffi == "easy":
+			fmt.Printf("%s%s%s\n", green, k, reset)
+		default:
+			fmt.Println(k)
+		}
+
+	}
 }
 
 func SelectRandomWord(wordsArr []string) string {
@@ -74,35 +142,6 @@ func CheckComp(dis []rune) bool {
 	return isRunning
 }
 
-func GetFiles() {
-	rand.Seed(time.Now().UnixNano())
-	dir := "./mots"
-
-	// Lire le contenu du dossier
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		fmt.Println("Erreur lors de la lecture du dossier :", err)
-		return
-	}
-
-	var files []string
-	// Parcourir les entrées
-	for _, entry := range entries {
-		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".txt" {
-			color := getColor(entry)
-			files = append(files, entry.Name()[0:len(entry.Name())-4])
-		}
-	}
-	// Vérifier si un fichier est passé en argument
-	fmt.Println("Choisissez un thème de mots parmis la lise :")
-
-	for _, k := range files {
-
-		fmt.Print(" -")
-		fmt.Println(k)
-	}
-}
-
 func SelectFile() string {
 	var chosenFile string
 	fmt.Scan(&chosenFile)
@@ -111,7 +150,15 @@ func SelectFile() string {
 }
 
 func getColor(fileName string) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
+	scanner := bufio.NewScanner(file)
+	wordsArr := []string{}
+	wordsArr = append(wordsArr, scanner.Text())
 }
 
 func printHangman(c int) {
