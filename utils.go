@@ -6,6 +6,8 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
+	"time"
 )
 
 func ReadWordsFromFile(fileName string) []string {
@@ -70,6 +72,46 @@ func CheckComp(dis []rune) bool {
 		}
 	}
 	return isRunning
+}
+
+func GetFiles() {
+	rand.Seed(time.Now().UnixNano())
+	dir := "./mots"
+
+	// Lire le contenu du dossier
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		fmt.Println("Erreur lors de la lecture du dossier :", err)
+		return
+	}
+
+	var files []string
+	// Parcourir les entrées
+	for _, entry := range entries {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".txt" {
+			color := getColor(entry)
+			files = append(files, entry.Name()[0:len(entry.Name())-4])
+		}
+	}
+	// Vérifier si un fichier est passé en argument
+	fmt.Println("Choisissez un thème de mots parmis la lise :")
+
+	for _, k := range files {
+
+		fmt.Print(" -")
+		fmt.Println(k)
+	}
+}
+
+func SelectFile() string {
+	var chosenFile string
+	fmt.Scan(&chosenFile)
+	fileName := ".\\mots\\" + chosenFile + ".txt"
+	return fileName
+}
+
+func getColor(fileName string) {
+
 }
 
 func printHangman(c int) {
